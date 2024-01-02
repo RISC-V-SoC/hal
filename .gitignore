@@ -1,0 +1,8 @@
+*.swp
+*.lst
+
+final*
+obj/*
+
+#ctags
+tags
