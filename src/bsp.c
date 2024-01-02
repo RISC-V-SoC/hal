@@ -1,4 +1,7 @@
+#include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
+#include "uart.h"
 
 int _fstat(int file, struct stat *st) {
     (void)file;
@@ -19,16 +22,33 @@ int _close(int fd) {
 }
 int _write (int fd, char *buf, int count) {
     (void)fd;
-    (void)buf;
-    (void)count;
-    return 0;
+    for (int i = 0; i < count; ++i) {
+        uart_putCharBlocking(buf[i]);
+    }
+    return count;
 }
 
 int _read (int fd, char *buf, int count) {
+    /* Note that if _read ever returns 0, this fd will be marked as having reached eof
+     * and any subsequent read will immidiately return without even trying. Therefore
+     * be a blocking read.
+     * Count will be some big number (1024), so waiting until we have enough characters
+     * is usually not an option.
+     */
     (void)fd;
-    (void)buf;
-    (void)count;
-    return 0;
+    uint16_t available = 0;
+    while (available == 0) {
+        available = uart_getRxCharsAvailable();
+    }
+    int total = 0;
+    while(available > 0 && count > 0) {
+        *buf = uart_getCharBlocking();
+        ++buf;
+        ++total;
+        --count;
+        --available;
+    }
+    return total;
 }
 
 int _isatty(int file) {
@@ -37,6 +57,7 @@ int _isatty(int file) {
 }
 
 void _exit(int status) {
+    printf("Entering exit..\r\n");
     (void)status;
     while(1);
 }

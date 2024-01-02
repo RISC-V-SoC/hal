@@ -4,39 +4,29 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include "uart.h"
 #include "bubbleSort.h"
 
-static void writeString(char* buf) {
-    while(*buf != 0) {
-        uart_putCharBlocking(*buf);
-        buf++;
-    }
-}
-
-static void writeEndl(void) {
-    uart_putCharBlocking('\r');
-    uart_putCharBlocking('\n');
-}
-
-static void writeStringAndEndl(char* buf) {
-    writeString(buf);
-    writeEndl();
-}
+#define LINE_ENDING "\r\n"
 
 static void readStringFromUart(char** b) {
     const size_t defaultBufSize = 32;
     char* buffer = malloc(defaultBufSize);
     if (buffer == NULL) {
-        writeStringAndEndl("Malloc failed");
+        printf("Malloc failed" LINE_ENDING);
     }
     size_t curSize = defaultBufSize;
     size_t index = 0;
     while(true) {
-        unsigned char byte = uart_getCharBlocking();
+        char byte = getchar();
+        if (byte == 255) {
+            continue;
+        }
         if (byte == '\r'){
-            writeEndl();
+            printf(LINE_ENDING);
         } else {
             uart_putCharBlocking(byte);
         }
@@ -45,7 +35,7 @@ static void readStringFromUart(char** b) {
                 curSize *= 2;
                 char* tmp = realloc(buffer, curSize);
                 if (tmp == NULL) {
-                    writeStringAndEndl("Realloc failed");
+                    printf("Realloc failed" LINE_ENDING);
                     free(buffer);
                     return;
                 } else {
@@ -114,52 +104,37 @@ static size_t parseNumbers(const char* buf, int32_t** out) {
 }
 
 static void printNumbers(const int32_t* arr, size_t arrlen) {
-    char* writeBuf = NULL;
     for (size_t i = 0; i < arrlen - 1; ++i) {
-        asprintf(&writeBuf, "%" PRId32 ", ", arr[i]);
-        if (writeBuf != NULL) {
-            writeString(writeBuf);
-            free(writeBuf);
-            writeBuf = NULL;
-        }
+        printf("%" PRId32 ", ", arr[i]);
     }
-    asprintf(&writeBuf, "%" PRId32, arr[arrlen - 1]);
-    writeStringAndEndl(writeBuf);
-    free(writeBuf);
-    writeBuf = NULL;
+    printf("%" PRId32 LINE_ENDING, arr[arrlen -1]);
 }
 
 int main() {
     uart_init(115200);
     char *buf = NULL;
-    writeStringAndEndl("Hello, world!");
+    printf("Hello, world!" LINE_ENDING);
     while (true) {
         readStringFromUart(&buf);
         if (buf != NULL) {
             if (buf[0] != 0) {
                 int32_t *numbers = NULL;
                 size_t numCount = parseNumbers(buf, &numbers);
-                char* writeBuf = NULL;
-                asprintf(&writeBuf, "There are %zu numbers in this string", numCount);
-                if (writeBuf != NULL) {
-                    writeStringAndEndl(writeBuf);
-                    free(writeBuf);
-                    writeBuf = NULL;
-                }
+                printf("There are %zu numbers in this string" LINE_ENDING, numCount);
                 if (numbers != NULL && numCount > 0) {
-                    writeStringAndEndl("Your numbers are:");
+                    printf("Your numbers are:" LINE_ENDING);
                     printNumbers(numbers, numCount);
                     bubbleSort_int32(numbers, numCount);
-                    writeStringAndEndl("Your numbers, but sorted are:");
+                    printf("Your numbers, but sorted are:" LINE_ENDING);
                     printNumbers(numbers, numCount);
                 }
             } else {
-                writeStringAndEndl("There were no numbers in this string");
+                printf("There were no numbers in this string");
             }
             free(buf);
             buf = NULL;
         } else {
-            writeStringAndEndl("Buf is NULL, this indicates program failure");
+            printf("Buf is NULL, this indicates program failure");
         }
     }
     return 0;

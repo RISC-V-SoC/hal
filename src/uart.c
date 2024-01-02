@@ -34,3 +34,7 @@ void uart_putCharBlocking(uint8_t data) {
     while(*txQueueCount >= MAX_QUEUE_SIZE);
     *txQueue = data;
 }
+
+uint16_t uart_getRxCharsAvailable(void) {
+    return *rxQueueCount;
+}
