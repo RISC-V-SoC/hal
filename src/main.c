@@ -9,6 +9,7 @@
 
 #include "uart.h"
 #include "bubbleSort.h"
+#include "asm_utils.h"
 
 #define LINE_ENDING "\r\n"
 
@@ -115,6 +116,7 @@ int main() {
     char *buf = NULL;
     printf("Hello, world!" LINE_ENDING);
     while (true) {
+        printf("The current systemtime is %" PRId64 LINE_ENDING, getSystemTimeUs());
         readStringFromUart(&buf);
         if (buf != NULL) {
             if (buf[0] != 0) {
@@ -129,12 +131,12 @@ int main() {
                     printNumbers(numbers, numCount);
                 }
             } else {
-                printf("There were no numbers in this string");
+                printf("There were no numbers in this string" LINE_ENDING);
             }
             free(buf);
             buf = NULL;
         } else {
-            printf("Buf is NULL, this indicates program failure");
+            printf("Buf is NULL, this indicates program failure" LINE_ENDING);
         }
     }
     return 0;
