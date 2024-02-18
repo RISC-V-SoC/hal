@@ -1,3 +1,0 @@
-#pragma once
-
-#define SYSTEM_CLOCK_FREQUENCY_HZ 100000000

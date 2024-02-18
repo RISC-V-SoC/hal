@@ -32,7 +32,7 @@ $(ODIR)%.asm.o: $(ASMDIR)%.asm | $(ODIR)
 	$(AS) $(ARCHFLAGS) $< -o $@
 
 $(ODIR)%.c.o: $(SRCDIR)%.c | $(ODIR)
-	$(GCC) $(CFLAGS) $(ARCHFLAGS) -Iinc -mbranch-cost=2 -O3 -c $< -o $@
+	$(GCC) $(CFLAGS) $(ARCHFLAGS) -Iinc -mbranch-cost=3 -O3 -c $< -o $@
 
 $(TARGET): $(OFILES)
 	$(GCC) -o $@ $^ $(LDFLAGS) -Tlinker_script.ld $(ARCHFLAGS)

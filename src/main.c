@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "staticSocInfo.h"
 #include "uart.h"
 #include "bubbleSort.h"
 #include "asm_utils.h"
@@ -116,7 +117,17 @@ int main() {
     char *buf = NULL;
     printf("Hello, world!" LINE_ENDING);
     while (true) {
-        printf("The current systemtime is %" PRId64 LINE_ENDING, getSystemTimeUs());
+        int ret = printf("The current systemtime is %" PRId64 LINE_ENDING, getSystemTimeUs());
+        if (ret == 0) return 1;
+        ret = printf("The total amount of instructions retired is: %" PRId64 LINE_ENDING, getInstructionsRetiredCount());
+        if (ret == 0) return 1;
+        ret = printf("The total amount of cycles passed is %" PRId64 LINE_ENDING, getCycleCount());
+        if (ret == 0) return 1;
+        float ratio = ((float)getCycleCount())/((float)getInstructionsRetiredCount());
+        printf("The ratio between cycles and instructions retired is %f" LINE_ENDING, ratio);
+        if (ret == 0) return 1;
+        ret = printf("The system clock speed is %" PRId32 "Hz" LINE_ENDING, getClockSpeedHz());
+
         readStringFromUart(&buf);
         if (buf != NULL) {
             if (buf[0] != 0) {

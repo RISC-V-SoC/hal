@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "systemClock.h"
+#include "staticSocInfo.h"
 #include "uart.h"
 
 static const uint16_t MAX_QUEUE_SIZE = 16;
@@ -19,7 +19,7 @@ static volatile uint32_t* const baudDivisor = (volatile uint32_t*)0x1008;
 void uart_init(uint32_t baudrate) {
     *txEnable = 0;
     *rxEnable = 0;
-    *baudDivisor = SYSTEM_CLOCK_FREQUENCY_HZ/baudrate;
+    *baudDivisor = getClockSpeedHz()/baudrate;
     *txEnable = 1;
     *rxEnable = 1;
 }
