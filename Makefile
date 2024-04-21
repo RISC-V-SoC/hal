@@ -1,7 +1,7 @@
-AS:=riscv32-none-elf-as
-GCC:=riscv32-none-elf-gcc
-LD:=riscv32-none-elf-ld
-OBJCOPY:=riscv32-none-elf-objcopy
+AS:=riscv-none-elf-as
+GCC:=riscv-none-elf-gcc
+LD:=riscv-none-elf-ld
+OBJCOPY:=riscv-none-elf-objcopy
 ASMDIR:=asm/
 SRCDIR:=src/
 ODIR=obj/
@@ -15,7 +15,7 @@ TARGETBIN:=final.bin
 TARGETTXT:=final.txt
 LDFLAGS := -Wl,--gc-sections -nodefaultlibs -lc -lgcc
 CFLAGS := -Wall -Wextra -MMD -MP
-ARCHFLAGS := -march=rv32i -mabi=ilp32
+ARCHFLAGS := -march=rv32i -mabi=ilp32 -mlittle-endian
 .PHONY: all release clean
 
 -include $(OFILES:%.o=%.d)
