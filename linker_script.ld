@@ -11,7 +11,7 @@ SECTIONS
     .text :
     {
         *(.text.startup)
-        *(.text)
+        *(.text*)
         _flash_data = .;
         . = ALIGN(4);
     } > FLASH
