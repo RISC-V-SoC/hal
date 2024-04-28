@@ -3,33 +3,19 @@
 
 #include "gpio.h"
 
-static const size_t TOTAL_PIN_COUNT = 8;
+static const size_t TOTAL_PIN_COUNT = 9;
 
 static volatile uint8_t* const gpioConfig = (volatile uint8_t*)0x3000;
-static volatile uint8_t* const gpioData = (volatile uint8_t*)0x3008;
+static volatile uint8_t* const gpioData = gpioConfig + TOTAL_PIN_COUNT;
 
-int gpio_setPinInoutType(size_t pinIndex, enum GPIO_INOUT_TYPE inoutType) {
-    if (pinIndex > TOTAL_PIN_COUNT) {
-        return EINVAL;
-    }
-
-    gpioConfig[pinIndex] = inoutType;
-    return 0;
+void gpio_setPinInoutType(enum GPIO_PIN_NAME pinName, enum GPIO_INOUT_TYPE inoutType) {
+    gpioConfig[(size_t)pinName] = inoutType;
 }
 
-int gpio_setPin(size_t pinIndex, bool setHigh) {
-    if (pinIndex > TOTAL_PIN_COUNT) {
-        return EINVAL;
-    }
-
-    gpioData[pinIndex] = setHigh ? 1 : 0;
-    return 0;
+void gpio_setPin(enum GPIO_PIN_NAME pinName, bool setHigh) {
+    gpioData[(size_t)pinName] = setHigh ? 1 : 0;
 }
 
-int gpio_getPin(size_t pinIndex, bool *isHigh) {
-    if (pinIndex > TOTAL_PIN_COUNT) {
-        return EINVAL;
-    }
-    *isHigh = (bool)(gpioData[pinIndex] & 0x01);
-    return 0;
+bool gpio_isPinHigh(enum GPIO_PIN_NAME pinName) {
+    return (bool)(gpioData[(size_t)pinName] & 0x01);
 }

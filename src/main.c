@@ -114,7 +114,7 @@ static void printNumbers(const int32_t* arr, size_t arrlen) {
 }
 
 int main() {
-    gpio_setPinInoutType(0, GPIO_INOUT_TYPE_IN);
+    gpio_setPinInoutType(GPIO_PIN_IO0, GPIO_INOUT_TYPE_IN);
     uart_init(115200);
     char *buf = NULL;
     printf("Hello, world!" LINE_ENDING);
@@ -129,8 +129,7 @@ int main() {
         printf("The ratio between cycles and instructions retired is %f" LINE_ENDING, ratio);
         if (ret == 0) return 1;
         ret = printf("The system clock speed is %" PRId32 "Hz" LINE_ENDING, getClockSpeedHz());
-        bool pinState;
-        gpio_getPin(0, &pinState);
+        bool pinState = gpio_isPinHigh(GPIO_PIN_IO0);
         printf("Pin 0 is %s" LINE_ENDING, pinState ? "high" : "low");
 
         readStringFromUart(&buf);

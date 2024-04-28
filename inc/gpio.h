@@ -8,8 +8,20 @@ enum GPIO_INOUT_TYPE {
     GPIO_INOUT_TYPE_OUT = 1
 };
 
-int gpio_setPinInoutType(size_t pinIndex, enum GPIO_INOUT_TYPE inoutType);
+enum GPIO_PIN_NAME {
+    GPIO_PIN_IO0 = 0,
+    GPIO_PIN_IO1 = 1,
+    GPIO_PIN_IO2 = 2,
+    GPIO_PIN_IO3 = 3,
+    GPIO_PIN_IO4 = 4,
+    GPIO_PIN_IO5 = 5,
+    GPIO_PIN_IO6 = 6,
+    GPIO_PIN_IO7 = 7,
+    GPIO_PIN_SPI_SS = 8
+};
 
-int gpio_setPin(size_t pinIndex, bool setHigh);
+void gpio_setPinInoutType(enum GPIO_PIN_NAME pinName, enum GPIO_INOUT_TYPE inoutType);
 
-int gpio_getPin(size_t pinIndex, bool *isHigh);
+void gpio_setPin(enum GPIO_PIN_NAME pinName, bool setHigh);
+
+bool gpio_isPinHigh(enum GPIO_PIN_NAME pinName);
