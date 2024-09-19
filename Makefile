@@ -13,7 +13,7 @@ OFILES := $(patsubst $(SRCDIR)%,$(ODIR)%,$(OFILES))
 TARGET:=final
 TARGETBIN:=final.bin
 TARGETTXT:=final.txt
-LDFLAGS := -Wl,--gc-sections -nodefaultlibs -lc -lgcc
+LDFLAGS := -Wl,--gc-sections -nodefaultlibs -nostartfiles -lc -lgcc
 CFLAGS := -Wall -Wextra -MMD -MP
 ARCHFLAGS := -march=rv32i -mabi=ilp32 -mlittle-endian
 .PHONY: all release clean
@@ -38,7 +38,7 @@ $(TARGET): $(OFILES)
 	$(GCC) -o $@ $^ $(LDFLAGS) -Tlinker_script.ld $(ARCHFLAGS)
 
 $(TARGETBIN): $(TARGET)
-	$(OBJCOPY) -j .text -j .data -j .bss -O binary $^ $@
+	$(OBJCOPY) -O binary $^ $@
 
 $(TARGETTXT): $(TARGETBIN)
 	od --address-radix=n --output-duplicates --width=4 --format=x4 $^ | tr -d ' ' > $@

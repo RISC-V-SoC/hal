@@ -1,7 +1,7 @@
-.section .text.startup
-.global __start
+.section .text.initial
+.global _start
 
-__start:
+_start:
 .option push
 .option norelax
     # Load stackpointer
@@ -15,13 +15,19 @@ __start:
     sub     a2, a2, a0
     li      a1, 0
     call    memset
-    # Copy the data segment
-    la      a0, _data
-    la      a1, _flash_data
-    la      a2, _edata
+    # Copy over ramfuncs
+    la      a0, __ramfunc_start
+    la      a1, __ramfunc_in_flash_start
+    la      a2, __ramfunc_end
     sub     a2, a2, a0
     call    memcpy
-    # Jump to the startup function, which is a noreturn
-    call main
-l1:
-    j l1
+    # Copy the data segment
+    la      a0, __data_start
+    la      a1, __data_in_flash_start
+    la      a2, __data_end
+    sub     a2, a2, a0
+    call    memcpy
+
+    call    __libc_init_array
+    call    main
+    tail    exit
