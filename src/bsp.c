@@ -57,8 +57,8 @@ int _isatty(int file) {
 }
 
 void _exit(int status) {
-    printf("Entering exit..\r\n");
-    (void)status;
+    uart_init(115200);
+    printf("_exit was called with status %d\n", status);
     while(1);
 }
 
