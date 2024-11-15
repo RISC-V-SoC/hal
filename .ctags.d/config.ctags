@@ -1,3 +1,6 @@
 --recurse=yes 
 --exclude=.git 
---exclude=project/vunit_out
+--extras=+f
+--extras=+q
+--exclude=*.asm 
+--exclude=Makefile
