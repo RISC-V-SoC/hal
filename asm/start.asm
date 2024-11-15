@@ -28,7 +28,6 @@ _start:
     sub     a2, a2, a0
     call    memcpy
 
-#    call    __libc_init_array
+    call    __libc_init_array
     call    main
-end:
-    j      end
+    tail    exit

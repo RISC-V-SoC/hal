@@ -38,7 +38,7 @@ void spi_init(uint32_t speed_hz, bool cpol, bool cpha) {
     *configureReg = configureByte;
 }
 
-void spi_transaction(const uint8_t* txBuf, size_t txBufLen, uint8_t* rxBuf, size_t rxBufLen) {
+void spi_transaction(uint8_t* txBuf, size_t txBufLen, uint8_t* rxBuf, size_t rxBufLen) {
     size_t txTransactionLength = txBufLen;
     if (rxBufLen > txTransactionLength) {
         txTransactionLength = rxBufLen;
@@ -47,8 +47,7 @@ void spi_transaction(const uint8_t* txBuf, size_t txBufLen, uint8_t* rxBuf, size
 
     flush();
     while(txTransactionLength > 0 || rxTransactionLength > 0) {
-
-        if (*rxQueueCount > 0 && rxTransactionLength > 0) {
+        while(*rxQueueCount > 0 && rxTransactionLength > 0) {
             uint8_t dataIn = *rxQueue;
             if (rxBufLen > 0) {
                 *rxBuf = dataIn;
@@ -58,7 +57,7 @@ void spi_transaction(const uint8_t* txBuf, size_t txBufLen, uint8_t* rxBuf, size
             rxTransactionLength--;
         }
 
-        if (*txQueueCount < MAX_QUEUE_SIZE && txTransactionLength > 0) {
+        while(*txQueueCount < MAX_QUEUE_SIZE && txTransactionLength > 0) {
             if (txBufLen > 0) {
                 *txQueue = *txBuf;
                 txBuf++;
@@ -68,5 +67,6 @@ void spi_transaction(const uint8_t* txBuf, size_t txBufLen, uint8_t* rxBuf, size
             }
             txTransactionLength--;
         }
+
     }
 }
