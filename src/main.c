@@ -14,13 +14,11 @@
 #include "asm_utils.h"
 #include "spi.h"
 
-#define LINE_ENDING "\r\n"
-
 static void readStringFromUart(char** b) {
     const size_t defaultBufSize = 32;
     char* buffer = malloc(defaultBufSize);
     if (buffer == NULL) {
-        printf("Malloc failed" LINE_ENDING);
+        printf("Malloc failed" "\n");
     }
     size_t curSize = defaultBufSize;
     size_t index = 0;
@@ -30,7 +28,7 @@ static void readStringFromUart(char** b) {
             continue;
         }
         if (byte == '\r'){
-            printf(LINE_ENDING);
+            printf("\n");
         } else {
             uart_putCharBlocking(byte);
         }
@@ -39,7 +37,7 @@ static void readStringFromUart(char** b) {
                 curSize *= 2;
                 char* tmp = realloc(buffer, curSize);
                 if (tmp == NULL) {
-                    printf("Realloc failed" LINE_ENDING);
+                    printf("Realloc failed" "\n");
                     free(buffer);
                     return;
                 } else {
@@ -111,7 +109,7 @@ static void printNumbers(const int32_t* arr, size_t arrlen) {
     for (size_t i = 0; i < arrlen - 1; ++i) {
         printf("%" PRId32 ", ", arr[i]);
     }
-    printf("%" PRId32 LINE_ENDING, arr[arrlen -1]);
+    printf("%" PRId32 "\n", arr[arrlen -1]);
 }
 
 int main() {
@@ -125,41 +123,41 @@ int main() {
     gpio_setPinInoutType(GPIO_PIN_IO0, GPIO_INOUT_TYPE_IN);
     uart_init(115200);
     char *buf = NULL;
-    printf("Hello, world!" LINE_ENDING);
+    printf("Hello, world!" "\n");
     while (true) {
-        int ret = printf("The current systemtime is %" PRId64 LINE_ENDING, getSystemTimeUs());
+        int ret = printf("The current systemtime is %" PRId64 "\n", getSystemTimeUs());
         if (ret == 0) return 1;
-        ret = printf("The total amount of instructions retired is: %" PRId64 LINE_ENDING, getInstructionsRetiredCount());
+        ret = printf("The total amount of instructions retired is: %" PRId64 "\n", getInstructionsRetiredCount());
         if (ret == 0) return 1;
-        ret = printf("The total amount of cycles passed is %" PRId64 LINE_ENDING, getCycleCount());
+        ret = printf("The total amount of cycles passed is %" PRId64 "\n", getCycleCount());
         if (ret == 0) return 1;
         float ratio = ((float)getCycleCount())/((float)getInstructionsRetiredCount());
-        printf("The ratio between cycles and instructions retired is %f" LINE_ENDING, ratio);
+        printf("The ratio between cycles and instructions retired is %f\n", ratio);
         if (ret == 0) return 1;
-        ret = printf("The system clock speed is %" PRId32 "Hz" LINE_ENDING, getClockSpeedHz());
+        ret = printf("The system clock speed is %" PRId32 "Hz\n", getClockSpeedHz());
         bool pinState = gpio_isPinHigh(GPIO_PIN_IO0);
-        printf("Pin 0 is %s" LINE_ENDING, pinState ? "high" : "low");
+        printf("Pin 0 is %s" "\n", pinState ? "high" : "low");
 
         readStringFromUart(&buf);
         if (buf != NULL) {
             if (buf[0] != 0) {
                 int32_t *numbers = NULL;
                 size_t numCount = parseNumbers(buf, &numbers);
-                printf("There are %zu numbers in this string" LINE_ENDING, numCount);
+                printf("There are %zu numbers in this string\n", numCount);
                 if (numbers != NULL && numCount > 0) {
-                    printf("Your numbers are:" LINE_ENDING);
+                    printf("Your numbers are:\n");
                     printNumbers(numbers, numCount);
                     bubbleSort_int32(numbers, numCount);
-                    printf("Your numbers, but sorted are:" LINE_ENDING);
+                    printf("Your numbers, but sorted are:\n");
                     printNumbers(numbers, numCount);
                 }
             } else {
-                printf("There were no numbers in this string" LINE_ENDING);
+                printf("There were no numbers in this string\n");
             }
             free(buf);
             buf = NULL;
         } else {
-            printf("Buf is NULL, this indicates program failure" LINE_ENDING);
+            printf("Buf is NULL, this indicates program failure\n");
         }
     }
     return 0;

@@ -23,6 +23,9 @@ int _close(int fd) {
 int _write (int fd, char *buf, int count) {
     (void)fd;
     for (int i = 0; i < count; ++i) {
+        if (buf[i] == '\n') {
+            uart_putCharBlocking('\r');
+        }
         uart_putCharBlocking(buf[i]);
     }
     return count;
