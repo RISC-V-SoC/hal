@@ -1,5 +1,6 @@
 .section .text.initial
 .global _start
+.option arch, +zicsr
 
 _start:
 .option push
@@ -9,6 +10,9 @@ _start:
     # Load global pointer
     la      gp, __global_pointer$
 .option pop
+    # Setup the trap vector
+    la      a0, syncTrapHandler_asm
+    csrw    mtvec,a0
     # Clear the bss segment
     la      a0, _bss
     la      a2, _ebss
