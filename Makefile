@@ -15,7 +15,7 @@ TARGETBIN:=final.bin
 TARGETTXT:=final.txt
 LDFLAGS := -Wl,--gc-sections -nodefaultlibs -nostartfiles -lc -lgcc
 CFLAGS := -Wall -Wextra -MMD -MP
-ARCHFLAGS := -march=rv32im -mabi=ilp32 -mlittle-endian
+ARCHFLAGS := -march=rv32i -mabi=ilp32 -mlittle-endian
 .PHONY: all release clean
 
 -include $(OFILES:%.o=%.d)
