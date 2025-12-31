@@ -60,8 +60,12 @@ int _isatty(int file) {
 }
 
 void _exit(int status) {
+#ifdef _TINY_BUILD_
+    (void)status;
+#else //_TINY_BUILD_
     uart_init(115200);
     printf("_exit was called with status %d\n", status);
+#endif //_TINY_BUILD_
     while(1);
 }
 

@@ -32,9 +32,17 @@ _start:
     sub     a2, a2, a0
     call    memcpy
 
+.ifndef _TINY_BUILD_
     la      a0, __libc_fini_array
     call    atexit
 
     call    __libc_init_array
+.endif
     call    main
+
+.ifdef _TINY_BUILD_
+L1:
+    j L1
+.else
     tail    exit
+.endif

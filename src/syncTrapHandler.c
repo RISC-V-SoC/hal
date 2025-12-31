@@ -3,6 +3,13 @@
 #include <stdio.h>
 #include "uart.h"
 
+#ifdef _TINY_BUILD_
+
+void syncTrapHandler(uint32_t, uint32_t) {
+}
+
+#else
+
 static const char* exceptionCodeAsString[] = {
     "Instruction address misaligned",
     "Instruction access fault",
@@ -35,16 +42,17 @@ void syncTrapHandler(uint32_t exceptionCode, uint32_t programCounter) {
     uart_init(115200);
     char buffer[100];
     snprintf(buffer, 100, "!! Irrecoverable exception occured !!\n");
-    printString(buffer);   
+    printString(buffer);
     snprintf(buffer, 100, "Program counter: 0x%08" PRIx32 "\n", programCounter);
-    printString(buffer);   
+    printString(buffer);
     snprintf(buffer, 100, "Exception code: 0x%08" PRIx32 "\n", exceptionCode);
-    printString(buffer);   
+    printString(buffer);
     if (exceptionCode < sizeof(exceptionCodeAsString)/sizeof(exceptionCodeAsString[0])) {
         snprintf(buffer, 100, "Exception reason: %s\n", exceptionCodeAsString[exceptionCode]);
     } else {
         snprintf(buffer, 100, "Exception reason: Unknown\n");
     }
-    printString(buffer);   
+    printString(buffer);
     uart_flush();
 }
+#endif //_TINY_BUILD_
