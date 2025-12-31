@@ -1,6 +1,9 @@
 .global getCycleCount
 .global getSystemTimeUs
 .global getInstructionsRetiredCount
+.global enableMachineTimerInterrupt
+.global disableMachineTimerInterrupt
+.global enableMachineInterrupt
 
 getCycleCount:
     rdcycleh a1
@@ -21,4 +24,21 @@ getInstructionsRetiredCount:
     rdinstret a0
     rdinstreth a4
     bne a1, a4, getInstructionsRetiredCount
+    ret
+
+.option arch, +zicsr
+
+enableMachineTimerInterrupt:
+    li      a0, 0x80
+    csrs    mie, a0
+    ret
+
+disableMachineTimerInterrupt:
+    li      a0, 0x80
+    csrc    mie, a0
+    ret
+
+enableMachineInterrupt:
+    li      a0, 0x8
+    csrs    mstatus, a0
     ret

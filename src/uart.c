@@ -24,7 +24,6 @@ void uart_init(uint32_t baudrate) {
     *rxEnable = 1;
 }
 
-
 uint8_t uart_getCharBlocking(void) {
     while(*rxQueueCount == 0);
     return *rxQueue;

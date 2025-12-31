@@ -13,6 +13,7 @@
 #include "bubbleSort.h"
 #include "asm_utils.h"
 #include "spi.h"
+#include "machineTimerInterrupt.h"
 
 static void readStringFromUart(char** b) {
     const size_t defaultBufSize = 32;
@@ -122,6 +123,7 @@ int main() {
 
     gpio_setPinInoutType(GPIO_PIN_IO0, GPIO_INOUT_TYPE_IN);
     uart_init(115200);
+    setupMachineTimerInterrupt();
     char *buf = NULL;
     printf("Hello, world!" "\n");
     while (true) {

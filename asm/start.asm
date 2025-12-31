@@ -11,7 +11,7 @@ _start:
     la      gp, __global_pointer$
 .option pop
     # Setup the trap vector
-    la      a0, syncTrapHandler_asm
+    la      a0, trapVector
     csrw    mtvec,a0
     # Clear the bss segment
     la      a0, _bss
@@ -31,6 +31,9 @@ _start:
     la      a2, __data_end
     sub     a2, a2, a0
     call    memcpy
+
+    la      a0, __libc_fini_array
+    call    atexit
 
     call    __libc_init_array
     call    main
