@@ -4,31 +4,27 @@
 #include "uart.h"
 #include "asm_utils.h"
 
-static volatile uint64_t* const mtime = (volatile uint64_t*)0x4000;
-static uint64_t* const mtimecmp = (uint64_t*)0x4008;
+static constexpr uintptr_t mtime_base = 0x4000;
 
-constexpr uint64_t ONE_MS = 1000;
-constexpr uint64_t ONE_S = 1000*ONE_MS;
+static volatile uint64_t* const mtime = (volatile uint64_t*)(mtime_base + 0x0);
+static uint64_t* const mtimecmp = (uint64_t*)(mtime_base + 0x8);
 
-constexpr uint64_t interval = 5*ONE_S;
-
-static void printString(const char* str) {
-    for (size_t i = 0; str[i] != '\0'; ++i) {
-        if (str[i] == '\n') {
-            uart_putCharBlocking('\r');
-        }
-        uart_putCharBlocking(str[i]);
-    }
-}
+static uint64_t interval;
+static void (*handler)(void);
 
  __attribute__ ((interrupt ("machine"))) void machineTimerInterruptHandler (void){
-    printString("Plonk!\n");
-    *mtimecmp += interval;
+     (*handler)();
+     *mtimecmp += interval;
 }
 
-void setupMachineTimerInterrupt(void) {
-    *mtimecmp = 0;
-    *mtime = 0;
-    enableMachineTimerInterrupt();
-    enableMachineInterrupt();
+void setupMachineTimerInterrupt(uint64_t intervalUs, void (*fPtr)(void)) {
+    if (intervalUs == 0 || fPtr == nullptr) {
+        disableMachineTimerInterrupt();
+    } else {
+        *mtimecmp = 0;
+        *mtime = 0;
+        interval = intervalUs;
+        handler = fPtr;
+        enableMachineTimerInterrupt();
+    }
 }

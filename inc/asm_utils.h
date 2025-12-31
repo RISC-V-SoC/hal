@@ -7,4 +7,6 @@ uint64_t getInstructionsRetiredCount(void);
 
 void enableMachineTimerInterrupt(void);
 void disableMachineTimerInterrupt(void);
-void enableMachineInterrupt(void);
+
+void enableGlobalMachineInterrupt(void);
+void disableGlobalMachineInterrupt(void);

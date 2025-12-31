@@ -10,10 +10,24 @@
 #include "staticSocInfo.h"
 #include "gpio.h"
 #include "uart.h"
-#include "bubbleSort.h"
 #include "asm_utils.h"
 #include "spi.h"
 #include "machineTimerInterrupt.h"
+
+void bubbleSort_int32(int32_t arr[], size_t n);
+
+static void printStringInterruptSafe(const char* str) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+        if (str[i] == '\n') {
+            uart_putCharBlocking('\r');
+        }
+        uart_putCharBlocking(str[i]);
+    }
+}
+
+static void mtimeHandler(void) {
+    printStringInterruptSafe("Plonk!\n");
+}
 
 static void readStringFromUart(char** b) {
     const size_t defaultBufSize = 32;
@@ -123,7 +137,13 @@ int main() {
 
     gpio_setPinInoutType(GPIO_PIN_IO0, GPIO_INOUT_TYPE_IN);
     uart_init(115200);
-    setupMachineTimerInterrupt();
+
+    constexpr uint64_t ONE_MS = 1000;
+    constexpr uint64_t ONE_S = 1000*ONE_MS;
+    setupMachineTimerInterrupt(5*ONE_S, mtimeHandler);
+
+    enableGlobalMachineInterrupt();
+
     char *buf = NULL;
     printf("Hello, world!" "\n");
     while (true) {

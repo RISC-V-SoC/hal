@@ -3,7 +3,8 @@
 .global getInstructionsRetiredCount
 .global enableMachineTimerInterrupt
 .global disableMachineTimerInterrupt
-.global enableMachineInterrupt
+.global enableGlobalMachineInterrupt
+.global disableGlobalMachineInterrupt
 
 getCycleCount:
     rdcycleh a1
@@ -38,7 +39,12 @@ disableMachineTimerInterrupt:
     csrc    mie, a0
     ret
 
-enableMachineInterrupt:
+enableGlobalMachineInterrupt:
     li      a0, 0x8
     csrs    mstatus, a0
+    ret
+
+disableGlobalMachineInterrupt:
+    li      a0, 0x8
+    csrc    mstatus, a0
     ret

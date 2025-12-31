@@ -1,3 +1,5 @@
 #pragma once
 
-void setupMachineTimerInterrupt(void);
+// fPtr is called every interval microseconds, under interrupt.
+// If fPtr == NULL or intervalUs == 0, the mtimer logic is disabled
+void setupMachineTimerInterrupt(uint64_t intervalUs, void (*fPtr)(void));
