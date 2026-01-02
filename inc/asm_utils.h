@@ -1,4 +1,9 @@
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 uint64_t getCycleCount(void);
@@ -38,3 +43,7 @@ uint32_t getHeartId(void);
             :                                    \
         );                                       \
     } while (0)
+
+#ifdef __cplusplus
+}
+#endif

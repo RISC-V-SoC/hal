@@ -1,7 +1,10 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
-#include <stdlib.h>
 
 enum GPIO_INOUT_TYPE {
     GPIO_INOUT_TYPE_IN = 0,
@@ -25,3 +28,7 @@ void gpio_setPinInoutType(enum GPIO_PIN_NAME pinName, enum GPIO_INOUT_TYPE inout
 void gpio_setPin(enum GPIO_PIN_NAME pinName, bool setHigh);
 
 bool gpio_isPinHigh(enum GPIO_PIN_NAME pinName);
+
+#ifdef __cplusplus
+}
+#endif
