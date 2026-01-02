@@ -61,7 +61,7 @@ $(TINYODIR)%.asm.o: $(ASMDIR)%.asm | $(TINYODIR)
 	$(AS) $(ARCHFLAGS) --defsym _TINY_BUILD_=1 $< -o $@
 
 $(TINYODIR)%.c.o: $(SRCDIR)%.c | $(TINYODIR)
-	$(GCC) $(CFLAGS) $(ARCHFLAGS) -D_TINY_BUILD_ -Os -c $< -o $@
+	$(GCC) $(CFLAGS) -ffunction-sections $(ARCHFLAGS) -D_TINY_BUILD_ -Os -c $< -o $@
 
 $(TINYODIR)%.c.o: $(TINYMAINDIR)%.c | $(TINYODIR)
 	$(GCC) $(CFLAGS) $(ARCHFLAGS) -D_TINY_BUILD_ -Os -c $< -o $@
