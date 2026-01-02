@@ -24,4 +24,4 @@ trapVector:
     # Offset 10*4, reserved
     nop
     # Offset 11*4, machine external interrupt
-    nop
+    j machineExternalInterruptHandler

@@ -5,6 +5,7 @@
 .global disableMachineTimerInterrupt
 .global enableGlobalMachineInterrupt
 .global disableGlobalMachineInterrupt
+.global getHeartId
 
 getCycleCount:
     rdcycleh a1
@@ -47,4 +48,8 @@ enableGlobalMachineInterrupt:
 disableGlobalMachineInterrupt:
     li      a0, 0x8
     csrc    mstatus, a0
+    ret
+
+getHeartId:
+    csrr a0, mhartid
     ret
