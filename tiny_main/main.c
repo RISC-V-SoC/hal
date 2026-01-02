@@ -4,7 +4,7 @@
 #include "spi.h"
 #include "gpio.h"
 #include "interruptManager.h"
-#include "asm_utils.h"
+#include "sysInterrupt.h"
 
 static constexpr uintptr_t SPI_BASE_ADDRESS = 0x1010;
 
@@ -34,7 +34,7 @@ int main() {
     interruptManager_setInterruptHandler(InterruptSource_spiRx, spiRxInterrupt);
     interruptManager_setInterruptPriority(InterruptSource_spiRx, contextPriority + 1);
 
-    enableGlobalMachineInterrupt();
+    MGI_EN;
 
     *interruptOnTxCount = 16;
     *interruptOnRxCount = 0;

@@ -13,6 +13,7 @@
 #include "asm_utils.h"
 #include "spi.h"
 #include "machineTimerInterrupt.h"
+#include "sysInterrupt.h"
 
 void bubbleSort_int32(int32_t arr[], size_t n);
 
@@ -142,7 +143,7 @@ int main() {
     constexpr uint64_t ONE_S = 1000*ONE_MS;
     setupMachineTimerInterrupt(5*ONE_S, mtimeHandler);
 
-    enableGlobalMachineInterrupt();
+    MGI_EN;
 
     char *buf = NULL;
     printf("Hello, world!" "\n");

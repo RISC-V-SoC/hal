@@ -2,7 +2,7 @@
 #include <stddef.h>
 
 #include "uart.h"
-#include "asm_utils.h"
+#include "sysInterrupt.h"
 
 static constexpr uintptr_t mtime_base = 0x4000;
 
@@ -19,12 +19,12 @@ static void (*handler)(void);
 
 void setupMachineTimerInterrupt(uint64_t intervalUs, void (*fPtr)(void)) {
     if (intervalUs == 0 || fPtr == nullptr) {
-        disableMachineTimerInterrupt();
+        MTI_DIS;
     } else {
         *mtimecmp = 0;
         *mtime = 0;
         interval = intervalUs;
         handler = fPtr;
-        enableMachineTimerInterrupt();
+        MTI_EN;
     }
 }

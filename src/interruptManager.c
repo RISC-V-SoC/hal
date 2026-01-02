@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "asm_utils.h"
+#include "sysInterrupt.h"
 
 static constexpr uintptr_t PLIC_BASE_ADDRESS = 0x10000000;
 static constexpr uintptr_t PLIC_INTERRUPT_PRIORITY_BASE_ADDRESS = PLIC_BASE_ADDRESS;
@@ -16,6 +16,19 @@ static void (*handlers[3])(void) = {
     nullptr, // spi tx handler
     nullptr, // spi rx handler
 };
+
+
+static uint32_t getHeartId(void) {
+    uint32_t hartid;
+    asm volatile (
+        ".option arch, +zicsr\n\t"\
+        "csrr %0, mhartid"
+        : "=r"(hartid)
+        :
+        :
+    );
+    return hartid;
+}
 
 static uint32_t translateToInterruptId(enum interruptManager_InterruptSource source) {
     switch(source)
