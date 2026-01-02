@@ -1,6 +1,4 @@
-AS:=riscv-none-elf-as
 GCC:=riscv-none-elf-gcc
-LD:=riscv-none-elf-ld
 OBJCOPY:=riscv-none-elf-objcopy
 ASMDIR:=asm/
 SRCDIR:=src/
@@ -8,7 +6,7 @@ MAINDIR:=main/
 TINYMAINDIR:=tiny_main/
 ODIR=obj/
 TINYODIR=tiny_obj/
-OFILES := $(patsubst %.asm,%.asm.o,$(wildcard $(ASMDIR)*.asm))
+OFILES := $(patsubst %.S,%.S.o,$(wildcard $(ASMDIR)*.S))
 OFILES += $(patsubst %.c,%.c.o,$(wildcard $(SRCDIR)*.c))
 OFILES += $(patsubst %.c,%.c.o,$(wildcard $(SRCDIR)*.c))
 TINYOFILES := $(OFILES)
@@ -39,8 +37,8 @@ all: $(TARGETBIN) $(TINYTARGETTXT)
 $(ODIR) $(TINYODIR):
 	mkdir -p $(@)
 
-$(ODIR)%.asm.o: $(ASMDIR)%.asm | $(ODIR)
-	$(AS) $(ARCHFLAGS) $< -o $@
+$(ODIR)%.S.o: $(ASMDIR)%.S | $(ODIR)
+	$(GCC) $(ARCHFLAGS) -c $< -o $@
 
 $(ODIR)%.c.o: $(SRCDIR)%.c | $(ODIR)
 	$(GCC) $(CFLAGS) $(ARCHFLAGS) -O3 -c $< -o $@
@@ -57,8 +55,8 @@ $(TARGETBIN): $(TARGET)
 $(TARGETTXT): $(TARGETBIN)
 	od --address-radix=n --output-duplicates --width=4 --format=x4 $^ | tr -d ' ' > $@
 
-$(TINYODIR)%.asm.o: $(ASMDIR)%.asm | $(TINYODIR)
-	$(AS) $(ARCHFLAGS) --defsym _TINY_BUILD_=1 $< -o $@
+$(TINYODIR)%.S.o: $(ASMDIR)%.S | $(TINYODIR)
+	$(GCC) $(ARCHFLAGS) -D_TINY_BUILD_ -c $< -o $@
 
 $(TINYODIR)%.c.o: $(SRCDIR)%.c | $(TINYODIR)
 	$(GCC) $(CFLAGS) -ffunction-sections $(ARCHFLAGS) -D_TINY_BUILD_ -Os -c $< -o $@

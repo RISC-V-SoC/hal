@@ -5,44 +5,44 @@
 _start:
 .option push
 .option norelax
-    # Load stackpointer
+    // Load stackpointer
     la      sp, _stack_start
-    # Load global pointer
+    // Load global pointer
     la      gp, __global_pointer$
 .option pop
-    # Setup the trap vector
+    // Setup the trap vector
     la      a0, trapVector
     csrw    mtvec,a0
-    # Clear the bss segment
+    // Clear the bss segment
     la      a0, _bss
     la      a2, _ebss
     sub     a2, a2, a0
     li      a1, 0
     call    memset
-    # Copy over ramfuncs
+    // Copy over ramfuncs
     la      a0, __ramfunc_start
     la      a1, __ramfunc_in_flash_start
     la      a2, __ramfunc_end
     sub     a2, a2, a0
     call    memcpy
-    # Copy the data segment
+    // Copy the data segment
     la      a0, __data_start
     la      a1, __data_in_flash_start
     la      a2, __data_end
     sub     a2, a2, a0
     call    memcpy
 
-.ifndef _TINY_BUILD_
+#if !defined(_TINY_BUILD_)
     la      a0, __libc_fini_array
     call    atexit
 
     call    __libc_init_array
-.endif
+#endif //!defined(_TINY_BUILD_)
     call    main
 
-.ifdef _TINY_BUILD_
+#if defined(_TINY_BUILD_)
 L1:
     j L1
-.else
+#else
     tail    exit
-.endif
+#endif
