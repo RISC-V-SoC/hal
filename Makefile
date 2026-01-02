@@ -29,6 +29,7 @@ ARCHFLAGS := -march=rv32im -mabi=ilp32 -mlittle-endian
 .PHONY: all clean
 
 -include $(OFILES:%.o=%.d)
+-include $(TINYOFILES:%.o=%.d)
 
 .DEFAULT_GOAL := all
 
