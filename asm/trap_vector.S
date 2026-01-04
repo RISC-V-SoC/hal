@@ -2,7 +2,7 @@
 
 trapVector:
     # Offset 0*4, synchronous exception handler
-    j syncTrapHandler_asm
+    j syncTrapHandler
     # Offset 1*4, Supervisor software interrupt
     nop
     # Offset 2*4, reserved

@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "interruptManager.h"
 #include "sysInterrupt.h"
+#include "exceptionManager.h"
 
 static constexpr uintptr_t SPI_BASE_ADDRESS = 0x1010;
 
@@ -23,9 +24,19 @@ static void spiRxInterrupt(void) {
     *interruptOnRxCount = 16;
 }
 
-int main() {
+static void exceptionHandler(enum exceptionManager_ExceptionSource source) {
+    uint8_t sourceCode = source & 0xff;
+    uart_putCharBlocking(0xff);
+    uart_putCharBlocking(sourceCode);
+    while(true);
+}
+
+int main(void) {
     uart_init(115200);
-    const uint32_t contextPriority = 0;
+
+    exceptionManager_setFallbackHandler(exceptionHandler);
+
+    constexpr uint32_t contextPriority = 0;
     interruptManager_setContextPriority(contextPriority);
 
     interruptManager_setInterruptHandler(InterruptSource_spiTx, spiTxInterrupt);
@@ -52,4 +63,6 @@ int main() {
     spi_transaction(&spiDataBuf[0], 1, NULL, 0);
     uart_putCharBlocking(0x04);
     gpio_setPin(GPIO_PIN_SPI_SS, true);
+
+    return 0;
 }
