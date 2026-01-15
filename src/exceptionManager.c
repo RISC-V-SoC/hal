@@ -26,15 +26,15 @@ enum mcause_code_definitions {
     // >=20 is either reserved or for custom use
 };
 
-static void defaultExceptionHandler(enum exceptionManager_ExceptionSource) {
+static void defaultExceptionHandler(enum exceptionManager_ExceptionSource, uintptr_t) {
     while(true);
 }
 
-static void (*fallbackHandler)(enum exceptionManager_ExceptionSource) = defaultExceptionHandler;
+static void (*fallbackHandler)(enum exceptionManager_ExceptionSource, uintptr_t) = defaultExceptionHandler;
 
 static uint32_t getExceptionCode(void) {
     uint32_t exceptionCode;
-    asm volatile (
+    asm (
         ".option arch, +zicsr\n\t"\
         "csrr %0, mcause"
         : "=r"(exceptionCode)
@@ -42,6 +42,18 @@ static uint32_t getExceptionCode(void) {
         :
     );
     return exceptionCode;
+}
+
+static uintptr_t getExceptedPC(void) {
+    uintptr_t pc;
+    asm (
+        ".option arch, +zicsr\n\t"\
+        "csrr %0, mepc"
+        : "=r"(pc)
+        :
+        :
+    );
+    return pc;
 }
 
 static enum exceptionManager_ExceptionSource translateExceptionCode(uint32_t code) {
@@ -68,10 +80,10 @@ static enum exceptionManager_ExceptionSource translateExceptionCode(uint32_t cod
 
 __attribute__ ((interrupt ("machine"))) void syncTrapHandler (void) {
     enum exceptionManager_ExceptionSource eSource = translateExceptionCode(getExceptionCode());
-    fallbackHandler(eSource);
+    fallbackHandler(eSource, getExceptedPC());
 }
 
-void exceptionManager_setFallbackHandler(void (*fPtr)(enum exceptionManager_ExceptionSource)) {
+void exceptionManager_setFallbackHandler(void (*fPtr)(enum exceptionManager_ExceptionSource, uintptr_t)) {
     if (fPtr == nullptr) {
         fallbackHandler = defaultExceptionHandler;
     } else {

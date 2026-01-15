@@ -16,7 +16,10 @@ enum exceptionManager_ExceptionSource {
 };
 
 // Setting fPtr to nullptr reinstalls a default handler that just loops forever
-void exceptionManager_setFallbackHandler(void (*fPtr)(enum exceptionManager_ExceptionSource));
+// Parameters to the functionpointer:
+// 1. The exception cause
+// 2. The program counter pointing at the offending instruction
+void exceptionManager_setFallbackHandler(void (*fPtr)(enum exceptionManager_ExceptionSource, uintptr_t));
 
 #ifdef __cplusplus
 }
