@@ -153,7 +153,9 @@ static void spiInterrupt(void) {
             gpio_setPin(GPIO_PIN_SPI_SS, true);
         }
         interruptData.hasTransaction = false;
-        *interruptData.trueOnComplete = true;
+        if (interruptData.trueOnComplete != nullptr) {
+            *interruptData.trueOnComplete = true;
+        }
         popTransferComplete();
         // Retrigger this interrupt to check if another transaction is waiting
         triggerInterrupt();
