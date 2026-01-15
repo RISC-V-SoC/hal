@@ -45,13 +45,15 @@ static uint32_t translateToInterruptId(enum interruptManager_InterruptSource sou
 __attribute__ ((interrupt ("machine"))) void machineExternalInterruptHandler (void) {
     const uint32_t heartId = getHeartId();
     volatile uint32_t* claimComplete = (volatile uint32_t*)(PLIC_CLAIM_COMPLETE_BASE_ADDRESS + heartId * 0x1000);
-    uint32_t interruptId = *claimComplete;
-    if (interruptId == 0) {
-        // Interrupt id 0 is reserved to mean "no interrupt pending"
-        return;
+    while (true) {
+        uint32_t interruptId = *claimComplete;
+        if (interruptId == 0) {
+            // Interrupt id 0 is reserved to mean "no interrupt pending"
+            return;
+        }
+        handlers[interruptId]();
+        *claimComplete = interruptId;
     }
-    handlers[interruptId]();
-    *claimComplete = interruptId;
 }
 
 void interruptManager_setContextPriority(uint32_t newPriority) {
