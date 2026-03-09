@@ -24,7 +24,7 @@ static void spiRxInterrupt(void) {
     *interruptOnRxCount = 16;
 }
 
-static void exceptionHandler(enum exceptionManager_ExceptionSource source) {
+static void exceptionHandler(enum exceptionManager_ExceptionSource source, uintptr_t) {
     uint8_t sourceCode = source & 0xff;
     uart_putCharBlocking(0xff);
     uart_putCharBlocking(sourceCode);
