@@ -129,13 +129,6 @@ static void printNumbers(const int32_t* arr, size_t arrlen) {
 }
 
 int main() {
-    gpio_setPinInoutType(GPIO_PIN_SPI_SS, GPIO_INOUT_TYPE_OUT);
-    gpio_setPin(GPIO_PIN_SPI_SS, false);
-    spi_init(10000000, false, false);
-    uint8_t spiDataBuf[2] = {0xff, 0x00};
-    spi_transaction(&spiDataBuf[0], 2, NULL, 0);
-    gpio_setPin(GPIO_PIN_SPI_SS, true);
-
     gpio_setPinInoutType(GPIO_PIN_IO0, GPIO_INOUT_TYPE_IN);
     uart_init(115200);
 
